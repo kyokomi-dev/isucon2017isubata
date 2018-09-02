@@ -443,7 +443,7 @@ SELECT
 FROM channel
   JOIN message ON message.channel_id = channel.id
   LEFT JOIN haveread ON haveread.channel_id = channel.id AND haveread.user_id = ?
-GROUP BY channel.id
+GROUP BY channel.id, haveread.message_id
 `, userID)
 	if err != nil {
 		return nil, errors.New(err.Error())
