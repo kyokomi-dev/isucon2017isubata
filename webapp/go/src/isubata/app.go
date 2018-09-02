@@ -413,7 +413,7 @@ func getMessage(c echo.Context) error {
 
 type ChannelHaveRead struct {
 	ChannelID int64  `db:"channel_id"`
-	MessageID *int64 `db:"channel_id"`
+	MessageID *int64 `db:"message_id"`
 }
 
 func queryChannels(userID int64) ([]*ChannelHaveRead, error) {
@@ -482,7 +482,7 @@ func fetchUnread(c echo.Context) error {
 			return errors.New(err.Error())
 		}
 		r := map[string]interface{}{
-			"channel_id": c,
+			"channel_id": c.ChannelID,
 			"unread":     cnt,
 		}
 		resp = append(resp, r)
