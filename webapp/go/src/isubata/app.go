@@ -706,6 +706,7 @@ func postProfile(c echo.Context) error {
 
 func getIcon(c echo.Context) error {
 	icon := iconMap[c.Param("file_name")]
+	c.Response().Header().Set("Cache-Control: public", "max-age=3600")
 	return c.Blob(http.StatusOK, icon.Mime, icon.Data)
 }
 
