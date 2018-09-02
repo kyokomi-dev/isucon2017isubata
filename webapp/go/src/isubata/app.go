@@ -144,7 +144,7 @@ FROM
   message
 JOIN user ON user.id = message.user_id
 WHERE 
-  id > ? AND channel_id = ? ORDER BY id DESC LIMIT 100`,
+  message.id > ? AND message.channel_id = ? ORDER BY message.id DESC LIMIT 100`,
 		lastID, chanID)
 	return msgs, err
 }
@@ -533,7 +533,7 @@ FROM
   message
 JOIN user ON user.id = message.user_id
 WHERE
-  channel_id = ? ORDER BY id DESC LIMIT ? OFFSET ?
+  message.channel_id = ? ORDER BY message.id DESC LIMIT ? OFFSET ?
 `,
 		chID, N, (page-1)*N)
 	if err != nil {
