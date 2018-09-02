@@ -120,7 +120,7 @@ type UserMessage struct {
 	Message
 	Name        string `json:"name" db:"userName"`
 	DisplayName string `json:"display_name" db:"userDisplayName"`
-	AvatarIcon  string `json:"avatar_icon" db:"userDisplayName"`
+	AvatarIcon  string `json:"avatar_icon" db:"userAvatarIcon"`
 }
 
 type Message struct {
@@ -139,7 +139,7 @@ SELECT
   message.* 
   user.name         AS userName,
   user.display_name AS userDisplayName,
-  user.avatar_icon  AS userDisplayName
+  user.avatar_icon  AS userAvatarIcon
 FROM 
   message
 JOIN user ON user.id = message.user_id
@@ -528,7 +528,7 @@ SELECT
   message.* 
   user.name         AS userName,
   user.display_name AS userDisplayName,
-  user.avatar_icon  AS userDisplayName
+  user.avatar_icon  AS userAvatarIcon
 FROM 
   message
 JOIN user ON user.id = message.user_id
