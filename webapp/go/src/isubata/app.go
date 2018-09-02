@@ -17,6 +17,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
@@ -423,6 +425,9 @@ SELECT
 FROM channel
   LEFT JOIN haveread ON haveread.channel_id = channel.id AND haveread.user_id = ?
 `, userID)
+	if err != nil {
+		return nil, errors.New(err.Error())
+	}
 	return res, err
 }
 
