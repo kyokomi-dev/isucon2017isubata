@@ -465,7 +465,7 @@ func fetchUnread(c echo.Context) error {
 
 	resp := []map[string]interface{}{}
 	for _, c := range channels {
-		lastID := c.MessageID
+		var lastID *int64
 		var cnt int64
 		if lastID != nil {
 			err = db.Get(&cnt,
