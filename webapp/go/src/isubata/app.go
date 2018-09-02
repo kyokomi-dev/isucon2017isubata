@@ -745,6 +745,15 @@ func main() {
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "request:\"${method} ${uri}\" status:${status} latency:${latency} (${latency_human}) bytes:${bytes_out}\n",
 	}))
+	e.Use(func(fn echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			err := fn(ctx)
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+			}
+			return err
+		}
+	})
 	e.Use(middleware.Static("../public"))
 
 	e.GET("/initialize", getInitialize)
