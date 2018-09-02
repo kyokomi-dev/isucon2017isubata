@@ -136,7 +136,7 @@ func queryUserMessages(chanID, lastID int64) ([]UserMessage, error) {
 	// SELECT name, display_name, avatar_icon FROM user WHERE id = ?
 	err := db.Select(&msgs, `
 SELECT 
-  message.* 
+  message.* ,
   user.name         AS userName,
   user.display_name AS userDisplayName,
   user.avatar_icon  AS userAvatarIcon
@@ -525,7 +525,7 @@ func getHistory(c echo.Context) error {
 	err = db.Select(&messages,
 		`
 SELECT 
-  message.* 
+  message.* ,
   user.name         AS userName,
   user.display_name AS userDisplayName,
   user.avatar_icon  AS userAvatarIcon
