@@ -409,13 +409,13 @@ func getMessage(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-type channleHave struct {
+type ChannleHave struct {
 	ChannelID int64  `db:"channel_id"`
 	MessageID *int64 `db:"message_id"`
 }
 
-func queryChannels(userID int64) ([]*channleHave, error) {
-	res := []*channleHave{}
+func queryChannels(userID int64) ([]*ChannleHave, error) {
+	res := []*ChannleHave{}
 	err := db.Select(&res, `
 SELECT 
   channel.id          AS channel_id, 
