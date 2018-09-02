@@ -228,6 +228,7 @@ func getInitialize(c echo.Context) error {
 	db.MustExec("DELETE FROM channel WHERE id > 10")
 	db.MustExec("DELETE FROM message WHERE id > 10000")
 	db.MustExec("DELETE FROM haveread")
+	initializeIcon()
 	return c.String(204, "")
 }
 
@@ -700,29 +701,8 @@ func postProfile(c echo.Context) error {
 }
 
 func getIcon(c echo.Context) error {
-	var name string
-	var data []byte
-	err := db.QueryRow("SELECT name, data FROM image WHERE name = ?",
-		c.Param("file_name")).Scan(&name, &data)
-	if err == sql.ErrNoRows {
-		return echo.ErrNotFound
-	}
-	if err != nil {
-		return err
-	}
-
-	mime := ""
-	switch true {
-	case strings.HasSuffix(name, ".jpg"), strings.HasSuffix(name, ".jpeg"):
-		mime = "image/jpeg"
-	case strings.HasSuffix(name, ".png"):
-		mime = "image/png"
-	case strings.HasSuffix(name, ".gif"):
-		mime = "image/gif"
-	default:
-		return echo.ErrNotFound
-	}
-	return c.Blob(http.StatusOK, mime, data)
+	icon := iconMap[c.Param("file_name")]
+	return c.Blob(http.StatusOK, icon.Mime, icon.Data)
 }
 
 func tAdd(a, b int64) int64 {
@@ -735,6 +715,50 @@ func tRange(a, b int64) []int64 {
 		r[i] = a + i
 	}
 	return r
+}
+
+type Icon struct {
+	Name string `db:"name"`
+	Data []byte `db:"data"`
+	Mime string `db:"-"`
+}
+
+var iconMap map[string]*Icon
+
+func initializeIcon() error {
+	var icons []*Icon
+	err := db.Select(&icons, "SELECT name, data FROM image")
+	if err == sql.ErrNoRows {
+		return echo.ErrNotFound
+	}
+	if err != nil {
+		return err
+	}
+
+	for i := range icons {
+		if _, ok := iconMap[icons[i].Name]; ok {
+			continue
+		}
+
+		icons[i].Mime = createMime(icons[i].Name)
+
+		iconMap[icons[i].Name] = icons[i]
+	}
+
+	return nil
+}
+
+func createMime(name string) string {
+	mime := ""
+	switch true {
+	case strings.HasSuffix(name, ".jpg"), strings.HasSuffix(name, ".jpeg"):
+		mime = "image/jpeg"
+	case strings.HasSuffix(name, ".png"):
+		mime = "image/png"
+	case strings.HasSuffix(name, ".gif"):
+		mime = "image/gif"
+	}
+	return mime
 }
 
 func main() {
