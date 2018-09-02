@@ -410,15 +410,15 @@ func getMessage(c echo.Context) error {
 }
 
 type channleHave struct {
-	ChannelID int64         `db:"channel_id"`
-	MessageID sql.NullInt64 `db:"message_id"`
+	ChannelID int64  `db:"channel_id"`
+	MessageID *int64 `db:"message_id"`
 }
 
 func queryChannels(userID int64) ([]*channleHave, error) {
 	res := []*channleHave{}
 	err := db.Select(&res, `
 SELECT 
-  channel.id AS channel_id, 
+  channel.id          AS channel_id, 
   haveread.message_id AS message_id 
 FROM channel
   LEFT JOIN haveread ON haveread.channel_id = channel.id AND haveread.user_id = ?
@@ -464,10 +464,10 @@ func fetchUnread(c echo.Context) error {
 	for _, c := range channels {
 		lastID := c.MessageID
 		var cnt int64
-		if lastID.Valid {
+		if lastID != nil {
 			err = db.Get(&cnt,
 				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ? AND ? < id",
-				c, lastID.Int64)
+				c, *lastID)
 		} else {
 			err = db.Get(&cnt,
 				"SELECT COUNT(*) as cnt FROM message WHERE channel_id = ?",
