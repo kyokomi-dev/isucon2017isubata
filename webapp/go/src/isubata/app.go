@@ -420,8 +420,7 @@ func queryChannels(userID int64) ([]*ChannleHaveRead, error) {
 	res := []*ChannleHaveRead{}
 	err := db.Select(&res, `
 SELECT 
-  channel.id          AS channel_id, 
-  haveread.message_id AS message_id 
+  channel.id          AS channel_id 
 FROM channel
   LEFT JOIN haveread ON haveread.channel_id = channel.id AND haveread.user_id = ?
 `, userID)
