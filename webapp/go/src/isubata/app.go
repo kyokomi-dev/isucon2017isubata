@@ -683,6 +683,8 @@ func postProfile(c echo.Context) error {
 		if err != nil {
 			return err
 		}
+		addIcon(avatarName, avatarData)
+
 		_, err = db.Exec("UPDATE user SET avatar_icon = ? WHERE id = ?", avatarName, self.ID)
 		if err != nil {
 			return err
@@ -746,6 +748,10 @@ func initializeIcon() error {
 	}
 
 	return nil
+}
+
+func addIcon(name string, data []byte) {
+	iconMap[name] = &Icon{Name: name, Data: data, Mime: createMime(name)}
 }
 
 func createMime(name string) string {
