@@ -733,6 +733,7 @@ func initializeIcon() error {
 	if err != nil {
 		return err
 	}
+	iconMap = map[string]*Icon{}
 
 	for i := range icons {
 		if _, ok := iconMap[icons[i].Name]; ok {
